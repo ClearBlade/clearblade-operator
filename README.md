@@ -19,7 +19,6 @@ You can easily create the required secret using the following command:
 
 ```
 kubectl [-n <NAMESPACE>] create secret generic <SECRET-NAME> --from-literal=pkey=<PLATFORM-KEY>
-
 ```
 
 Additionally, your cluster must be able to pull from `registry.redhat.io` if you
