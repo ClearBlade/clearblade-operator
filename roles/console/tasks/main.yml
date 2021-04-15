@@ -1,0 +1,56 @@
+---
+- name: Console deployment
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ console_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            name: '{{ console_name }}'
+        template:
+          metadata:
+            name: '{{ console_name }}'
+            labels:
+              app: '{{ console_name }}'
+              name: '{{ console_name }}'
+              networking/allow-internet-access: 'true'
+          spec:
+            containers:
+            - image: '{{ images.console }}'
+              name: '{{ console_name }}'
+              command:
+              - 'cb_console'
+              args:
+              - '-platformURL'
+              - '{{ http_proto }}://{{ domain }}'
+              - '-platformPort'
+              - '{{ http_port }}'
+              - '-messageURL'
+              - '{{ domain }}'
+              - '-messagePort'
+              - '8903'
+              ports:
+              - name: http
+                containerPort: 3000
+                protocol: TCP
+
+- name: Console service
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ console_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        ports:
+        - name: http
+          port: 80
+          targetPort: http
+        selector:
+          app: '{{ console_name }}'

@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: no
+  collections:
+    - community.kubernetes
+    - operator_sdk.util
+  roles:
+    - prepare
+    - network-policy
+    - persistent
+    - database
+    - backend
+    - console
+    - haproxy
+    - ingress

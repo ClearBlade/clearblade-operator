@@ -1,0 +1,47 @@
+# see: https://www.openshift.com/blog/guide-to-kubernetes-ingress-network-policies
+---
+- name: Network policy - Deny all
+  community.kubernetes.k8s:
+    definition:
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: default-deny-all
+        namespace: '{{ namespace }}'
+      spec:
+        podSelector: {}
+        policyTypes:
+        - Ingress
+
+- name: Network policy - Allow same namespace
+  community.kubernetes.k8s:
+    definition:
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-same-namespace
+        namespace: '{{ namespace }}'
+      spec:
+        ingress:
+        - from:
+          - podSelector: {}
+        podSelector: {}
+        policyTypes:
+        - Ingress
+
+- name: Network policy - Allow internet access
+  community.kubernetes.k8s:
+    definition:
+      kind: NetworkPolicy
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: allow-internet-access
+        namespace: '{{ namespace }}'
+      spec:
+        ingress:
+        - {}
+        podSelector:
+          matchLabels:
+            networking/allow-internet-access: 'true'
+        policyTypes:
+        - Ingress

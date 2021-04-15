@@ -1,0 +1,90 @@
+---
+- name: Backend and console ingress - Secure
+  when: tls_secret|trim != ''
+  community.kubernetes.k8s:
+    definition:
+      kind: Ingress
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: '{{ ingress_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        tls:
+          - hosts:
+              - '{{ domain }}'
+            secretName: '{{ tls_secret }}'
+        rules:
+          - host: '{{ domain }}'
+            http:
+              paths:
+                - path: /api
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /admin
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /codeadmin
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ console_name }}'
+                      port:
+                        name: http
+
+- name: Backend and console ingress - Insecure
+  when: tls_secret|trim == ''
+  community.kubernetes.k8s:
+    definition:
+      kind: Ingress
+      apiVersion: networking.k8s.io/v1
+      metadata:
+        name: '{{ ingress_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        rules:
+          - host: '{{ domain }}'
+            http:
+              paths:
+                - path: /api
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /admin
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /codeadmin
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ backend_name }}'
+                      port:
+                        name: http
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: '{{ console_name }}'
+                      port:
+                        name: http

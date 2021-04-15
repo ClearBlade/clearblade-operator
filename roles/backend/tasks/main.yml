@@ -1,0 +1,75 @@
+---
+- name: Backend deployment
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ backend_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            name: '{{ backend_name }}'
+        template:
+          metadata:
+            name: '{{ backend_name }}'
+            labels:
+              app: '{{ backend_name }}'
+              name: '{{ backend_name }}'
+              networking/allow-internet-access: 'true'
+          spec:
+            containers:
+            - image: '{{ images.backend }}'
+              name: clearblade
+              envFrom:
+              - secretRef:
+                  name: '{{ secret }}'
+              command:
+              - 'clearblade'
+              args:
+              - '-db'
+              - 'postgres'
+              - '-db-host'
+              - '{{ database_name }}'
+              - '-db-port'
+              - '5432'
+              - '-db-user'
+              - 'clearblade'
+              - '-db-pass'
+              - 'password'
+              - '-pkey'
+              - '$(pkey)'
+              ports:
+              - name: mqtt
+                containerPort: 1883
+                protocol: TCP
+              - name: ws
+                containerPort: 8903
+                protocol: TCP
+              - name: http
+                containerPort: 9000
+                protocol: TCP
+
+- name: Backend service
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ backend_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        selector:
+          app: '{{ backend_name }}'
+        ports:
+        - name: http
+          port: 80
+          targetPort: http
+        - name: mqtt
+          port: 1883
+          targetPort: mqtt
+        - name: ws
+          port: 8903
+          targetPort: ws

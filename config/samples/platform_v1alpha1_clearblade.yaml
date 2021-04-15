@@ -1,0 +1,10 @@
+apiVersion: platform.clearblade.com/v1alpha1
+kind: ClearBlade
+metadata:
+  name: clearblade-sample
+spec:
+  domain: localhost.clearblade.com
+  secret: clearblade-sample-secret
+  storage: 1Gi
+  storageClassName: local-path
+  tlsSecret: ''

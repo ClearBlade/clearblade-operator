@@ -1,0 +1,29 @@
+---
+- name: Register namespace
+  set_fact:
+    namespace: '{{ ansible_operator_meta.namespace }}'
+
+- name: Register database name
+  set_fact:
+    database_name: '{{ ansible_operator_meta.name }}-db'
+
+- name: Register backend name
+  set_fact:
+    backend_name: '{{ ansible_operator_meta.name }}-backend'
+
+- name: Register console name
+  set_fact:
+    console_name: '{{ ansible_operator_meta.name }}-console'
+
+- name: Register ingress name
+  set_fact:
+    ingress_name: '{{ ansible_operator_meta.name }}-ingress'
+
+- name: Register persistent volume claim name
+  set_fact:
+    claim_name: '{{ ansible_operator_meta.name }}-pvc'
+
+- name: Register HTTP vars
+  set_fact:
+    http_proto: "{{ 'http' if tls_secret|trim == '' else 'https' }}"
+    http_port: "{{ '80' if tls_secret|trim == '' else '443' }}"

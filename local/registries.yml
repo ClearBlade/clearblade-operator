@@ -1,0 +1,28 @@
+# see: https://github.com/k3s-io/k3s/issues/1610
+# see: https://github.com/k3s-io/k3s/issues/2367
+
+mirrors:
+  docker.io:
+    endpoint:
+      - "https://registry-1.docker.io"
+  gcr.io:
+    endpoint:
+      - "https://gcr.io"
+  registry.redhat.io:
+    endpoint:
+      - "https://registry.redhat.io"
+
+configs:
+  registry-1.docker.io:
+    auth:
+      username: USERNAME
+      password: PASSWORD
+  gcr.io:
+    auth:
+      username: _json_key
+      password: >-
+        JSON_KEY
+  registry.redhat.io:
+    auth:
+      username: USERNAME
+      password: PASSWORD

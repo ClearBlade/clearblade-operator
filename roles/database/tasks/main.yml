@@ -1,0 +1,76 @@
+---
+- name: Database configuration
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: '{{ database_name }}-cm'
+        namespace: '{{ namespace }}'
+        labels:
+          app: '{{ database_name }}'
+      data:
+        # Docker Hub
+        # POSTGRES_USER: clearblade
+        # POSTGRES_PASSWORD: password
+        # POSTGRES_DB: admin
+        # RedHat
+        POSTGRESQL_USER: clearblade
+        POSTGRESQL_PASSWORD: password
+        POSTGRESQL_DATABASE: admin
+
+- name: Database deployment
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: '{{ database_name }}'
+        namespace: '{{ namespace }}'
+        labels:
+          app: '{{ database_name }}'
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: '{{ database_name }}'
+        template:
+          metadata:
+            name: '{{ database_name }}'
+            labels:
+              app: '{{ database_name }}'
+          spec:
+            volumes:
+            - name: postgres-data
+              persistentVolumeClaim:
+                claimName: '{{ claim_name }}'
+            containers:
+            - name: postgres
+              image: '{{ images.database }}'
+              envFrom:
+              - configMapRef:
+                  name: '{{ database_name }}-cm'
+              ports:
+              - containerPort: 5432
+                name: postgresdb
+              volumeMounts:
+              - name: postgres-data
+                # Docker Hub
+                # mountPath: /var/lib/postgresql/data
+                # RedHat
+                mountPath: /var/lib/pgsql/data
+
+- name: Database service
+  community.kubernetes.k8s:
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: '{{ database_name }}'
+        namespace: '{{ namespace }}'
+      spec:
+        ports:
+        - port: 5432
+          targetPort: 5432
+        selector:
+          app: '{{ database_name }}'

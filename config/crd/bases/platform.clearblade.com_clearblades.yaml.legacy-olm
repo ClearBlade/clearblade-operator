@@ -1,0 +1,68 @@
+---
+# NOTE: v1beta1 seems to have issues with olm (deploy timing out)
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: clearblades.platform.clearblade.com
+spec:
+  group: platform.clearblade.com
+  names:
+    kind: ClearBlade
+    listKind: ClearBladeList
+    plural: clearblades
+    singular: clearblade
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+  validation:
+    openAPIV3Schema:
+      description: ClearBlade is the Schema for the clearblades API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: Spec defines the desired state of ClearBlade
+          type: object
+          properties:
+            version:
+              description: 'Release version to use for the ClearBlade platform'
+              type: string
+            domain:
+              description: 'Domain that points to the load balancer'
+              type: string
+              default: localhost
+            storage:
+              description: 'Storage to request in the persistent volume claim'
+              type: string
+              default: '1Gi'
+            storageClassName:
+              description: 'Storage class name of the provisioner to use in the
+                persistent volume claim'
+              type: string
+              default: ''
+            pkey:
+              description: 'Platform key issued by ClearBlade'
+              type: string
+          required:
+          - version
+          - pkey
+        status:
+          description: Status defines the observed state of ClearBlade
+          type: object
+          x-kubernetes-preserve-unknown-fields: true
+      type: object
+    subresources:
+      status: {}
+    version: v1alpha1
