@@ -118,6 +118,8 @@ spec:
     url: https://www.clearblade.com/
   - name: ClearBlade Platform Overview
     url: https://docs.clearblade.com/v/4/platform/
+  - name: ClearBlade Operator
+    url: https://github.com/clearblade/clearblade-operator
   maintainers:
   - email: msprague@clearblade.com
     name: Michael Sprague
