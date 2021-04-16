@@ -34,6 +34,12 @@ kubectl [-n <NAMESPACE>] apply -f <PATH-TO-MANIFEST-YAML>
 
 Check the `config/samples` folder for sample CRD(s) you can apply in your cluster.
 
+For more information regarding the CRD fields, you can run:
+
+```
+kubectl explain clearblade.spec
+```
+
 ### FAQ
 
 #### What is a good reference for the Kubernetes manifest files this operator has?
