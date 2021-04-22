@@ -26,9 +26,39 @@
               name: '{{ console_name }}'
               networking/allow-internet-access: 'true'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: In
+                        values:
+                        - amd64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
             containers:
-            - image: '{{ images.console }}'
-              name: '{{ console_name }}'
+            - name: '{{ console_name }}'
+              image: '{{ images.console }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: false
+                runAsUser: 0
+              resources:
+                limits:
+                  memory: 256Mi
+                requests:
+                  cpu: 0.125
+                  memory: 64Mi
               command:
               - 'cb_console'
               args:
@@ -44,6 +74,14 @@
               - name: http
                 containerPort: 3000
                 protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /console-api/platformURL
+                  port: 3000
+              livenessProbe:
+                httpGet:
+                  path: /console-api/platformURL
+                  port: 3000
 
 - name: Console service
   community.kubernetes.k8s:

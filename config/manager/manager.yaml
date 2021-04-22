@@ -31,6 +31,7 @@ spec:
             - name: ANSIBLE_GATHERING
               value: explicit
           image: controller:latest
+          imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /healthz

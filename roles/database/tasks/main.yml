@@ -48,6 +48,22 @@
               app.kubernetes.io/managed-by: '{{ app_managed_by }}'
               name: '{{ database_name }}'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: In
+                        values:
+                        - amd64
+                        - arm64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 26
             volumes:
             - name: postgres-data
               persistentVolumeClaim:
@@ -55,6 +71,21 @@
             containers:
             - name: postgres
               image: '{{ images.database }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: true
+                runAsUser: 26
+              resources:
+                limits:
+                  memory: 4Gi
+                requests:
+                  cpu: 0.250
+                  memory: 512Mi
               envFrom:
               - configMapRef:
                   name: '{{ database_name }}-cm'
@@ -67,6 +98,20 @@
                 # mountPath: /var/lib/postgresql/data
                 # RedHat
                 mountPath: /var/lib/pgsql/data
+              readinessProbe:
+                exec:
+                  command:
+                  # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
+                  - 'sh'
+                  - '-c'
+                  - 'psql --no-password --username "$POSTGRESQL_USER" --dbname "$POSTGRESQL_DATABASE" --command "SELECT 1"'
+              livenessProbe:
+                exec:
+                  command:
+                  # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
+                  - 'sh'
+                  - '-c'
+                  - 'psql --no-password --username "$POSTGRESQL_USER" --dbname "$POSTGRESQL_DATABASE" --command "SELECT 1"'
 
 - name: Database service
   community.kubernetes.k8s:

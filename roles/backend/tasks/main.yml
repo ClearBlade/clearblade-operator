@@ -26,9 +26,39 @@
               name: '{{ backend_name }}'
               networking/allow-internet-access: 'true'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: In
+                        values:
+                        - amd64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
             containers:
-            - image: '{{ images.backend }}'
-              name: clearblade
+            - name: clearblade
+              image: '{{ images.backend }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: false
+                runAsUser: 0
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  cpu: 0.250
+                  memory: 128Mi
               envFrom:
               - secretRef:
                   name: '{{ secret }}'
@@ -57,6 +87,14 @@
               - name: http
                 containerPort: 9000
                 protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /api/about
+                  port: 9000
+              livenessProbe:
+                httpGet:
+                  path: /api/about
+                  port: 9000
 
 - name: Backend service
   community.kubernetes.k8s:
