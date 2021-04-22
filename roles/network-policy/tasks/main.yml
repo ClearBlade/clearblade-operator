@@ -8,6 +8,10 @@
       metadata:
         name: default-deny-all
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         podSelector: {}
         policyTypes:
@@ -21,6 +25,10 @@
       metadata:
         name: allow-same-namespace
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ingress:
         - from:
@@ -37,6 +45,10 @@
       metadata:
         name: allow-internet-access
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ingress:
         - {}

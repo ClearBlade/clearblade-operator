@@ -8,7 +8,9 @@
         name: '{{ database_name }}-cm'
         namespace: '{{ namespace }}'
         labels:
-          app: '{{ database_name }}'
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       data:
         # Docker Hub
         # POSTGRES_USER: clearblade
@@ -19,27 +21,48 @@
         POSTGRESQL_PASSWORD: password
         POSTGRESQL_DATABASE: admin
 
-- name: Database deployment
+- name: Database stateful set
   community.kubernetes.k8s:
     definition:
       apiVersion: apps/v1
-      kind: Deployment
+      kind: StatefulSet
       metadata:
         name: '{{ database_name }}'
         namespace: '{{ namespace }}'
         labels:
-          app: '{{ database_name }}'
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
+          name: '{{ database_name }}'
       spec:
         replicas: 1
         selector:
           matchLabels:
-            app: '{{ database_name }}'
+            name: '{{ database_name }}'
         template:
           metadata:
             name: '{{ database_name }}'
             labels:
-              app: '{{ database_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
+              name: '{{ database_name }}'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                      - amd64
+                      - arm64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: true
             volumes:
             - name: postgres-data
               persistentVolumeClaim:
@@ -47,6 +70,20 @@
             containers:
             - name: postgres
               image: '{{ images.database }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: true
+              resources:
+                limits:
+                  memory: 4Gi
+                requests:
+                  cpu: 0.250
+                  memory: 512Mi
               envFrom:
               - configMapRef:
                   name: '{{ database_name }}-cm'
@@ -59,6 +96,30 @@
                 # mountPath: /var/lib/postgresql/data
                 # RedHat
                 mountPath: /var/lib/pgsql/data
+              readinessProbe:
+                exec:
+                  command:
+                  # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
+                  - 'sh'
+                  - '-c'
+                  - >-
+                    psql
+                    --no-password
+                    --username "$POSTGRESQL_USER"
+                    --dbname "$POSTGRESQL_DATABASE"
+                    --command "SELECT 1"
+              livenessProbe:
+                exec:
+                  command:
+                  # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
+                  - 'sh'
+                  - '-c'
+                  - >-
+                    psql
+                    --no-password
+                    --username "$POSTGRESQL_USER"
+                    --dbname "$POSTGRESQL_DATABASE"
+                    --command "SELECT 1"
 
 - name: Database service
   community.kubernetes.k8s:
@@ -68,9 +129,13 @@
       metadata:
         name: '{{ database_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ports:
         - port: 5432
           targetPort: 5432
         selector:
-          app: '{{ database_name }}'
+          name: '{{ database_name }}'

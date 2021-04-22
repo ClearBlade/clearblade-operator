@@ -7,6 +7,10 @@
       metadata:
         name: '{{ backend_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         replicas: 1
         selector:
@@ -16,13 +20,43 @@
           metadata:
             name: '{{ backend_name }}'
             labels:
-              app: '{{ backend_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
               name: '{{ backend_name }}'
               networking/allow-internet-access: 'true'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                      - amd64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: false
             containers:
-            - image: '{{ images.backend }}'
-              name: clearblade
+            - name: clearblade
+              image: '{{ images.backend }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: false
+              resources:
+                limits:
+                  memory: 512Mi
+                requests:
+                  cpu: 0.250
+                  memory: 128Mi
               envFrom:
               - secretRef:
                   name: '{{ secret }}'
@@ -51,6 +85,14 @@
               - name: http
                 containerPort: 9000
                 protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /api/about
+                  port: 9000
+              livenessProbe:
+                httpGet:
+                  path: /api/about
+                  port: 9000
 
 - name: Backend service
   community.kubernetes.k8s:
@@ -60,9 +102,11 @@
       metadata:
         name: '{{ backend_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
-        selector:
-          app: '{{ backend_name }}'
         ports:
         - name: http
           port: 80
@@ -73,3 +117,5 @@
         - name: ws
           port: 8903
           targetPort: ws
+        selector:
+          name: '{{ backend_name }}'

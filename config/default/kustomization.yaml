@@ -9,8 +9,10 @@ namespace: clearblade-operator-system
 namePrefix: clearblade-operator-
 
 # Labels to add to all resources and selectors.
-#commonLabels:
-#  someName: someValue
+commonLabels:
+  app.kubernetes.io/instance: clearblade-operator
+  app.kubernetes.io/managed-by: olm
+  app.kubernetes.io/name: clearblade-operator
 
 bases:
 - ../crd

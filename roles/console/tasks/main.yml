@@ -7,6 +7,10 @@
       metadata:
         name: '{{ console_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         replicas: 1
         selector:
@@ -16,13 +20,43 @@
           metadata:
             name: '{{ console_name }}'
             labels:
-              app: '{{ console_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
               name: '{{ console_name }}'
               networking/allow-internet-access: 'true'
           spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                  - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                      - amd64
+            hostIPC: false
+            hostNetwork: false
+            hostPID: false
+            securityContext:
+              runAsNonRoot: false
             containers:
-            - image: '{{ images.console }}'
-              name: '{{ console_name }}'
+            - name: '{{ console_name }}'
+              image: '{{ images.console }}'
+              securityContext:
+                allowPrivilegeScalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: false
+              resources:
+                limits:
+                  memory: 256Mi
+                requests:
+                  cpu: 0.125
+                  memory: 64Mi
               command:
               - 'cb_console'
               args:
@@ -38,6 +72,14 @@
               - name: http
                 containerPort: 3000
                 protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /console-api/platformURL
+                  port: 3000
+              livenessProbe:
+                httpGet:
+                  path: /console-api/platformURL
+                  port: 3000
 
 - name: Console service
   community.kubernetes.k8s:
@@ -47,10 +89,14 @@
       metadata:
         name: '{{ console_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ports:
         - name: http
           port: 80
           targetPort: http
         selector:
-          app: '{{ console_name }}'
+          name: '{{ console_name }}'
