@@ -1,4 +1,10 @@
 ---
+- name: Register app metadata
+  set_fact:
+    app_name: 'clearblade'
+    app_instance: 'clearblade'
+    app_managed_by: 'clearblade-operator'
+
 - name: Register namespace
   set_fact:
     namespace: '{{ ansible_operator_meta.namespace }}'

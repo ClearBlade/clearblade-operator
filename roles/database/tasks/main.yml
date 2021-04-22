@@ -8,7 +8,9 @@
         name: '{{ database_name }}-cm'
         namespace: '{{ namespace }}'
         labels:
-          app: '{{ database_name }}'
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       data:
         # Docker Hub
         # POSTGRES_USER: clearblade
@@ -28,17 +30,23 @@
         name: '{{ database_name }}'
         namespace: '{{ namespace }}'
         labels:
-          app: '{{ database_name }}'
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
+          name: '{{ database_name }}'
       spec:
         replicas: 1
         selector:
           matchLabels:
-            app: '{{ database_name }}'
+            name: '{{ database_name }}'
         template:
           metadata:
             name: '{{ database_name }}'
             labels:
-              app: '{{ database_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
+              name: '{{ database_name }}'
           spec:
             volumes:
             - name: postgres-data
@@ -68,9 +76,13 @@
       metadata:
         name: '{{ database_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ports:
         - port: 5432
           targetPort: 5432
         selector:
-          app: '{{ database_name }}'
+          name: '{{ database_name }}'

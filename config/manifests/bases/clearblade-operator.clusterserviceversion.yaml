@@ -5,11 +5,11 @@ metadata:
     alm-examples: '[]'
     capabilities: Seamless Upgrades
     categories: Application Runtime,Database,Streaming & Messasing
-    containerImage: docker.io/clearblade/operator-bundle:0.0.1
+    containerImage: docker.io/clearblade/operator-bundle
     createdAt: "2020-04-01T12:59:59Z"
     description: Deploys the ClearBlade Platform to Kubernetes clusters
     support: ClearBlade Support Team
-  name: clearblade-operator.v0.0.1
+  name: clearblade-operator.v0.0.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -129,4 +129,4 @@ spec:
   provider:
     name: ClearBlade
     url: https://www.clearblade.com/
-  version: 0.0.1
+  version: 0.0.0

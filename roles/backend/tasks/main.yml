@@ -7,6 +7,10 @@
       metadata:
         name: '{{ backend_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         replicas: 1
         selector:
@@ -16,7 +20,9 @@
           metadata:
             name: '{{ backend_name }}'
             labels:
-              app: '{{ backend_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
               name: '{{ backend_name }}'
               networking/allow-internet-access: 'true'
           spec:
@@ -60,9 +66,11 @@
       metadata:
         name: '{{ backend_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
-        selector:
-          app: '{{ backend_name }}'
         ports:
         - name: http
           port: 80
@@ -73,3 +81,5 @@
         - name: ws
           port: 8903
           targetPort: ws
+        selector:
+          name: '{{ backend_name }}'

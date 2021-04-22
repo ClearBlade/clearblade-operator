@@ -7,6 +7,10 @@
       metadata:
         name: '{{ console_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         replicas: 1
         selector:
@@ -16,7 +20,9 @@
           metadata:
             name: '{{ console_name }}'
             labels:
-              app: '{{ console_name }}'
+              app.kubernetes.io/name: '{{ app_name }}'
+              app.kubernetes.io/instance: '{{ app_instance }}'
+              app.kubernetes.io/managed-by: '{{ app_managed_by }}'
               name: '{{ console_name }}'
               networking/allow-internet-access: 'true'
           spec:
@@ -47,10 +53,14 @@
       metadata:
         name: '{{ console_name }}'
         namespace: '{{ namespace }}'
+        labels:
+          app.kubernetes.io/name: '{{ app_name }}'
+          app.kubernetes.io/instance: '{{ app_instance }}'
+          app.kubernetes.io/managed-by: '{{ app_managed_by }}'
       spec:
         ports:
         - name: http
           port: 80
           targetPort: http
         selector:
-          app: '{{ console_name }}'
+          name: '{{ console_name }}'

@@ -151,7 +151,12 @@ Deploy the operator to the cluster using the `make` target `deploy`:
 make deploy IMG="$OPERATOR_IMG"
 ```
 
-THe operator should be up and running.
+The operator should be up and running.
+
+#### Managing the version
+
+The version is managed by the operator SDK when generating the bundle. Check
+the `VERSION` param in the [Makefile](Makefile) for more info.
 
 #### Running in an air-gap environment
 
@@ -181,4 +186,3 @@ The schema of our custom resource is defined at `config/crd/bases`.
 1. Create a new Ansible role under `roles`
 
 2. Add the role to the playbook at `playbooks/clearblade.yml`
-
