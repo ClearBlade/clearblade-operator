@@ -63,7 +63,6 @@
             hostPID: false
             securityContext:
               runAsNonRoot: true
-              runAsUser: 26
             volumes:
             - name: postgres-data
               persistentVolumeClaim:
@@ -79,7 +78,6 @@
                 privileged: false
                 readOnlyRootFilesystem: false
                 runAsNonRoot: true
-                runAsUser: 26
               resources:
                 limits:
                   memory: 4Gi

@@ -40,7 +40,6 @@
             hostPID: false
             securityContext:
               runAsNonRoot: false
-              runAsUser: 0
             containers:
             - name: clearblade
               image: '{{ images.backend }}'
@@ -52,7 +51,6 @@
                 privileged: false
                 readOnlyRootFilesystem: false
                 runAsNonRoot: false
-                runAsUser: 0
               resources:
                 limits:
                   memory: 512Mi
