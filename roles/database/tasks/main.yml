@@ -21,11 +21,11 @@
         POSTGRESQL_PASSWORD: password
         POSTGRESQL_DATABASE: admin
 
-- name: Database deployment
+- name: Database stateful set
   community.kubernetes.k8s:
     definition:
       apiVersion: apps/v1
-      kind: Deployment
+      kind: StatefulSet
       metadata:
         name: '{{ database_name }}'
         namespace: '{{ namespace }}'
