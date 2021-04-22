@@ -52,12 +52,12 @@
               nodeAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
                   nodeSelectorTerms:
-                    - matchExpressions:
-                      - key: kubernetes.io/arch
-                        operator: In
-                        values:
-                        - amd64
-                        - arm64
+                  - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                      - amd64
+                      - arm64
             hostIPC: false
             hostNetwork: false
             hostPID: false
@@ -104,14 +104,24 @@
                   # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
                   - 'sh'
                   - '-c'
-                  - 'psql --no-password --username "$POSTGRESQL_USER" --dbname "$POSTGRESQL_DATABASE" --command "SELECT 1"'
+                  - >-
+                    psql
+                    --no-password
+                    --username "$POSTGRESQL_USER"
+                    --dbname "$POSTGRESQL_DATABASE"
+                    --command "SELECT 1"
               livenessProbe:
                 exec:
                   command:
                   # see: https://github.com/kubernetes/kubernetes/issues/40846#issuecomment-415014405
                   - 'sh'
                   - '-c'
-                  - 'psql --no-password --username "$POSTGRESQL_USER" --dbname "$POSTGRESQL_DATABASE" --command "SELECT 1"'
+                  - >-
+                    psql
+                    --no-password
+                    --username "$POSTGRESQL_USER"
+                    --dbname "$POSTGRESQL_DATABASE"
+                    --command "SELECT 1"
 
 - name: Database service
   community.kubernetes.k8s:
