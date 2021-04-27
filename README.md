@@ -40,6 +40,22 @@ For more information regarding the CRD fields, you can run:
 kubectl explain clearblade.spec
 ```
 
+### Supported clusters
+
+[k3s]: https://k3s.io/
+
+[openshift]: https://www.openshift.com/
+
+[olm]: https://github.com/operator-framework/operator-lifecycle-manager
+
+Since the operator is not using any legacy or alpha features from the Kubernetes API,
+it is expected to work in any standard Kubernetes distribution. As of the time of
+writing, it was tested on:
+
+- [K3s][k3s] v1.20.4-k3s1 with [OLM][olm] 0.17.0
+
+- [OpenShift][openshift] 4.7.2
+
 ### FAQ
 
 #### What is a good reference for the Kubernetes manifest files this operator has?
