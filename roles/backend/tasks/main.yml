@@ -40,6 +40,7 @@
             hostPID: false
             securityContext:
               runAsNonRoot: false
+            serviceAccountName: '{{ service_account }}'
             containers:
             - name: clearblade
               image: '{{ images.backend }}'
@@ -89,10 +90,16 @@
                 httpGet:
                   path: /api/about
                   port: 9000
+                failureThreshold: 3
+                initialDelaySeconds: 5
+                periodSeconds: 5
               livenessProbe:
                 httpGet:
                   path: /api/about
                   port: 9000
+                failureThreshold: 3
+                initialDelaySeconds: 10
+                periodSeconds: 10
 
 - name: Backend service
   community.kubernetes.k8s:

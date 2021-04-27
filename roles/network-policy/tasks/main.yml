@@ -3,8 +3,8 @@
 - name: Network policy - Deny all
   community.kubernetes.k8s:
     definition:
-      kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
       metadata:
         name: default-deny-all
         namespace: '{{ namespace }}'
@@ -20,8 +20,8 @@
 - name: Network policy - Allow same namespace
   community.kubernetes.k8s:
     definition:
-      kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
       metadata:
         name: allow-same-namespace
         namespace: '{{ namespace }}'
@@ -40,8 +40,8 @@
 - name: Network policy - Allow internet access
   community.kubernetes.k8s:
     definition:
-      kind: NetworkPolicy
       apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
       metadata:
         name: allow-internet-access
         namespace: '{{ namespace }}'

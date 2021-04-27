@@ -40,6 +40,7 @@
             hostPID: false
             securityContext:
               runAsNonRoot: false
+            serviceAccountName: '{{ service_account }}'
             containers:
             - name: '{{ console_name }}'
               image: '{{ images.console }}'
@@ -76,10 +77,16 @@
                 httpGet:
                   path: /console-api/platformURL
                   port: 3000
+                failureThreshold: 3
+                initialDelaySeconds: 5
+                periodSeconds: 5
               livenessProbe:
                 httpGet:
                   path: /console-api/platformURL
                   port: 3000
+                failureThreshold: 3
+                initialDelaySeconds: 10
+                periodSeconds: 10
 
 - name: Console service
   community.kubernetes.k8s:

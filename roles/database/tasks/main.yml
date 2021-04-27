@@ -63,6 +63,7 @@
             hostPID: false
             securityContext:
               runAsNonRoot: true
+            serviceAccountName: '{{ service_account }}'
             volumes:
             - name: postgres-data
               persistentVolumeClaim:
@@ -108,6 +109,9 @@
                     --username "$POSTGRESQL_USER"
                     --dbname "$POSTGRESQL_DATABASE"
                     --command "SELECT 1"
+                failureThreshold: 3
+                initialDelaySeconds: 5
+                periodSeconds: 5
               livenessProbe:
                 exec:
                   command:
@@ -120,6 +124,9 @@
                     --username "$POSTGRESQL_USER"
                     --dbname "$POSTGRESQL_DATABASE"
                     --command "SELECT 1"
+                failureThreshold: 3
+                initialDelaySeconds: 10
+                periodSeconds: 10
 
 - name: Database service
   community.kubernetes.k8s:
