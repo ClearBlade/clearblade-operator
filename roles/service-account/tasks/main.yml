@@ -1,8 +1,9 @@
 ---
 - name: Service account
   community.kubernetes.k8s:
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: '{{ service_account }}'
-      namespace: '{{ namespace }}'
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: '{{ service_account }}'
+        namespace: '{{ namespace }}'

@@ -6,6 +6,7 @@
     - operator_sdk.util
   roles:
     - prepare
+    - service-account
     - network-policy
     - persistent
     - database
