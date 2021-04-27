@@ -52,7 +52,7 @@ Since the operator is not using any legacy or alpha features from the Kubernetes
 it is expected to work in any standard Kubernetes distribution. As of the time of
 writing, it was tested on:
 
-- [K3s][k3s] v1.20.4-k3s1, with [OLM][olm] 0.17.0
+- [K3s][k3s] v1.20.4-k3s1 with [OLM][olm] 0.17.0
 
 - [OpenShift][openshift] 4.7.2
 
