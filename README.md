@@ -193,6 +193,51 @@ spec:
     ...
 ```
 
+#### SCC requirements
+
+[crc]: https://developers.redhat.com/products/codeready-containers/overview
+
+The operator specifies the *Security Context Constraints* (SCC) for most of the
+pods. However, the SCC below represents the *restricted* SCC from a vanilla
+OpenShift install (using [CodeReady Containers][crc]) in which the operator runs:
+
+```
+Name:						restricted
+Priority:					<none>
+Access:
+  Users:					<none>
+  Groups:					system:authenticated
+Settings:
+  Allow Privileged:				false
+  Allow Privilege Escalation:			true
+  Default Add Capabilities:			<none>
+  Required Drop Capabilities:			KILL,MKNOD,SETUID,SETGID
+  Allowed Capabilities:				<none>
+  Allowed Seccomp Profiles:			<none>
+  Allowed Volume Types:				configMap,downwardAPI,emptyDir,persistentVolumeClaim,projected,secret
+  Allowed Flexvolumes:				<all>
+  Allowed Unsafe Sysctls:			<none>
+  Forbidden Sysctls:				<none>
+  Allow Host Network:				false
+  Allow Host Ports:				false
+  Allow Host PID:				false
+  Allow Host IPC:				false
+  Read Only Root Filesystem:			false
+  Run As User Strategy: MustRunAsRange
+    UID:					<none>
+    UID Range Min:				<none>
+    UID Range Max:				<none>
+  SELinux Context Strategy: MustRunAs
+    User:					<none>
+    Role:					<none>
+    Type:					<none>
+    Level:					<none>
+  FSGroup Strategy: MustRunAs
+    Ranges:					<none>
+  Supplemental Groups Strategy: RunAsAny
+    Ranges:					<none>
+```
+
 #### Adding new parameter to the ClearBlade custom resource
 
 The schema of our custom resource is defined at `config/crd/bases`.
