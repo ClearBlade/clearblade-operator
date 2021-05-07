@@ -1,3 +1,6 @@
+[openshift]: https://www.openshift.com/
+
+[olm]: https://github.com/operator-framework/operator-lifecycle-manager
 
 ClearBlade operator for deploying the ClearBlade platform to Kubernetes clusters.
 
@@ -6,6 +9,25 @@ ClearBlade operator for deploying the ClearBlade platform to Kubernetes clusters
 This operator is based on the Operator SDK (Ansible plugin):
 
 https://sdk.operatorframework.io/docs/building-operators/ansible/
+
+### Installing the operator
+
+#### OpenShift clusters
+
+[operator-index]: https://hub.docker.com/r/clearblade/operator-index/tags?page=1&ordering=last_updated
+
+[catalog-sources]: https://www.openshift.com/blog/openshift-4-3-managing-catalog-sources-in-the-openshift-web-console
+
+Add the [ClearBlade catalog source][operator-index] to your cluster. For
+instructions on doing it [check here][catalog-sources].
+
+#### Non-OpenShift cluters
+
+You can run the bundle if you have [OLM][olm] installed:
+
+```
+operator-sdk run bundle docker.io/clearblade/operator-bundle:<VERSION>
+```
 
 ### Applying the ClearBlade CRD
 
@@ -43,10 +65,6 @@ kubectl explain clearblade.spec
 ### Supported clusters
 
 [k3s]: https://k3s.io/
-
-[openshift]: https://www.openshift.com/
-
-[olm]: https://github.com/operator-framework/operator-lifecycle-manager
 
 Since the operator is not using any legacy or alpha features from the Kubernetes API,
 it is expected to work in any standard Kubernetes distribution. As of the time of
